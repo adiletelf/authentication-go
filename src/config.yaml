@@ -1,0 +1,4 @@
+ListenAddress: ":8080"
+ConnectionAddress: "mongodb://localhost:27017"
+DatabaseName: "test"
+CollectionName: "users"
