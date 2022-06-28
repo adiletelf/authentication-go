@@ -5,13 +5,24 @@ import (
 )
 
 type Config struct {
-	ListenAddress    string
-	ConnectionString string
-	DatabaseName     string
-	CollectionName   string
+	ListenAddress string
+	DB            struct {
+		ConnectionString string
+		DatabaseName     string
+		CollectionName   string
+	}
+	AccessTokenMinuteLifespan string
+	RefreshTokenHourLifespan  string
+	ApiSecret                 string
 }
 
+var Cfg *Config
+
 func New() (*Config, error) {
+	if Cfg != nil {
+		return Cfg, nil
+	}
+
 	config := &Config{}
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
@@ -23,5 +34,6 @@ func New() (*Config, error) {
 		return nil, err
 	}
 	err = viper.Unmarshal(config)
-	return config, err
+	Cfg = config
+	return Cfg, err
 }
