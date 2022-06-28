@@ -3,14 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"fmt"
 
 	"github.com/adiletelf/authentication-go/internal/config"
-	"github.com/adiletelf/authentication-go/internal/model"
+	"github.com/adiletelf/authentication-go/internal/handler"
 	"github.com/adiletelf/authentication-go/internal/repository"
 	"github.com/adiletelf/authentication-go/internal/util"
-	"github.com/google/uuid"
-	// "github.com/gin-gonic/gin"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -30,26 +29,15 @@ func main() {
 	defer db.Drop(ctx)
 
 	ur := repository.NewUserRepo(ctx, collection, client)
+	h := handler.New(ur)
 
-	user := model.User{
-		ID:       uuid.New(),
-		Username: "root",
-		Password: "root",
-	}
-	user2 := model.User{
-		ID:       uuid.New(),
-		Username: "second",
-		Password: "second",
-	}
-	fmt.Println(ur.Save(&user))
-	fmt.Println(ur.Save(&user2))
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.String(200, "Ok")
+	})
 
-	// h := handler.New(ur)
-	// println(h)
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
 
-	// r := gin.Default()
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.String(200, "Ok")
-	// })
-	// r.Run(config.ListenAddress)
+	r.Run(config.ListenAddress)
 }
