@@ -24,8 +24,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer client.Disconnect(ctx)
-	db := client.Database(config.DatabaseName)
-	collection := db.Collection(config.CollectionName)
+	db := client.Database(config.DB.DatabaseName)
+	collection := db.Collection(config.DB.CollectionName)
 	defer db.Drop(ctx)
 
 	ur := repository.NewUserRepo(ctx, collection, client)

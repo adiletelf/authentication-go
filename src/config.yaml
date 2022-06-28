@@ -1,4 +1,8 @@
 ListenAddress: ":8080"
-ConnectionString: "mongodb://localhost:27017"
-DatabaseName: "test"
-CollectionName: "users"
+DB:
+  ConnectionString: "mongodb://localhost:27017"
+  DatabaseName: "test"
+  CollectionName: "users"
+AccessTokenMinuteLifespan: "15"
+RefreshTokenHourLifespan: "24"
+ApiSecret: "answeris42"

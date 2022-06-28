@@ -9,7 +9,7 @@ import (
 )
 
 func SetupDB(ctx context.Context, config *config.Config) (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI(config.ConnectionString)
+	clientOptions := options.Client().ApplyURI(config.DB.ConnectionString)
 	client, err := mongo.Connect(ctx, clientOptions)
 	return client, err
 }
