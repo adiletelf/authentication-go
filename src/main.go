@@ -6,6 +6,7 @@ import (
 
 	"github.com/adiletelf/authentication-go/internal/config"
 	"github.com/adiletelf/authentication-go/internal/handler"
+	"github.com/adiletelf/authentication-go/internal/middleware"
 	"github.com/adiletelf/authentication-go/internal/repository"
 	"github.com/adiletelf/authentication-go/internal/util"
 
@@ -25,19 +26,24 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 	db := client.Database(config.DB.DatabaseName)
-	collection := db.Collection(config.DB.CollectionName)
 	defer db.Drop(ctx)
+	collection := db.Collection(config.DB.CollectionName)
 
 	ur := repository.NewUserRepo(ctx, collection, client)
 	h := handler.New(ur)
-
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.String(200, "Ok")
-	})
 
+	configureRoutes(r, h)
+	r.Run(config.ListenAddress)
+}
+
+func configureRoutes(r *gin.Engine, h *handler.Handler) {
 	r.POST("/register", h.Register)
 	r.POST("/login", h.Login)
 
-	r.Run(config.ListenAddress)
+	protected := r.Group("/api")
+	protected.Use(middleware.JwtAuthMiddleware())
+
+	protected.GET("/", h.HandleHome)
+
 }

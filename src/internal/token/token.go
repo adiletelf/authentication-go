@@ -1,7 +1,10 @@
 package token
 
 import (
+	"fmt"
+	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/adiletelf/authentication-go/internal/config"
@@ -24,6 +27,34 @@ func Generate(uuid uuid.UUID) (model.TokenDetails, error) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
+}
+
+func TokenValid(r *http.Request) error {
+	cfg, _ := config.New()
+	token := ExtractToken(r, "accessToken")
+	_, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte(cfg.ApiSecret), nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func ExtractToken(r *http.Request, tokenName string) string {
+	token := r.URL.Query().Get(tokenName)
+	if token != "" {
+		return token
+	}
+	bearerToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearerToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
 }
 
 func generateAccessToken(uuid uuid.UUID) (string, error) {
