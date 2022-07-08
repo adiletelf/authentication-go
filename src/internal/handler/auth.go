@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type RegisterInput struct {
+type RegisterBody struct {
 	Password string `json:"password"`
 }
 
 func (h *Handler) Register(c *gin.Context) {
-	var input RegisterInput
+	var input RegisterBody
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -34,13 +34,13 @@ func (h *Handler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "uuid": insertedID})
 }
 
-type LoginInput struct {
+type LoginBody struct {
 	UUID     uuid.UUID `json:"uuid"`
 	Password string    `json:"password"`
 }
 
 func (h *Handler) Login(c *gin.Context) {
-	var input LoginInput
+	var input LoginBody
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

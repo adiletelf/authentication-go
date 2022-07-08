@@ -45,5 +45,5 @@ func configureRoutes(r *gin.Engine, h *handler.Handler) {
 	protected.Use(middleware.JwtAuthMiddleware())
 
 	protected.GET("/", h.HandleHome)
-
+	protected.GET("/refresh", h.Refresh)
 }

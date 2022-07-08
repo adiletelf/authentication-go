@@ -21,14 +21,14 @@ func (h *Handler) HandleHome(c *gin.Context) {
 	c.String(200, "ok")
 }
 
-type tokenRequestBody struct {
+type refreshTokenQuery struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
 func (h *Handler) Refresh(c *gin.Context) {
-	var input tokenRequestBody
+	var input refreshTokenQuery
 
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBindQuery(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
